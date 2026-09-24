@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hormuz Tanker Chronicles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div><p class="eyebrow">Strait of Hormuz // Fleet command</p><h1>Hormuz Tanker Chronicles</h1></div>
+      <div class="wallet"><span>WALLET</span><strong id="wallet">0 $HOC</strong><small id="voyageState">DOCKED</small></div>
+    </header>
+
+    <main>
+      <nav class="mode-tabs" aria-label="Game mode">
+        <button id="convoyTab" class="mode-tab active" type="button">CONVOY MODE</button>
+        <button id="pirateTab" class="mode-tab" type="button">PIRATE MODE</button>
+      </nav>
+      <section class="dashboard">
+        <div class="section-heading"><span class="tag">Shipyard / your fleet</span><span class="capacity" id="fleetCapacity">0 / 5 tankers deployed</span></div>
+        <div class="resource-grid">
+          <div class="resource"><span>Owned tankers</span><strong id="ownedTankers">0</strong></div>
+          <div class="resource"><span>Escort / pirate NFTs</span><strong id="ownedEscorts">0</strong></div>
+          <div class="resource"><span>Weapon systems</span><strong id="ownedWeapons">0</strong></div>
+          <div class="resource"><span>Voyages survived</span><strong id="voyages">0</strong></div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat"><span>Fleet value</span><strong id="fleetValue">0</strong><small>$HOC NFT value</small></div>
+          <div class="stat"><span>Cargo capacity</span><strong id="cargoCapacity">0 t</strong><small>selected convoy</small></div>
+          <div class="stat"><span>Protection</span><strong id="protection">0%</strong><small>attack mitigation</small></div>
+          <div class="stat"><span>Voyages survived</span><strong id="voyages">0</strong><small>captains' record</small></div>
+        </div>
+      </section>
+
+      <div id="convoyMode">
+      <section class="section-block">
+        <div class="section-heading"><span class="tag">1 // Tankers vault</span><span class="hint">Click an owned NFT to add it · maximum 5 units</span></div>
+        <div id="tankers-vault" class="card-grid"></div>
+      </section>
+
+      <section class="section-block split">
+        <div>
+          <div class="section-heading"><span class="tag">2 // Escorts vault</span><span class="hint">Owned support and pirate units</span></div>
+          <div id="escorts-vault" class="card-grid compact-vault"></div>
+        </div>
+        <div>
+          <div class="section-heading"><span class="tag">3 // Weapons vault</span><span class="hint">Owned charges can be assigned before launch</span></div>
+          <div id="weapons-vault" class="card-grid compact-vault"></div>
+        </div>
+      </section>
+
+      <section class="briefing">
+        <div><div class="section-heading"><span class="tag">Convoy manifest</span></div><div id="summary" class="summary"></div></div>
+        <div class="launch-panel"><label for="route">Route profile</label><select id="route"><option value="safe">Protected corridor · 120 sec base</option><option value="standard" selected>Commercial lane · 150 sec base</option><option value="dark">Dark water shortcut · 180 sec base</option></select><span id="fuelFee" class="fee">Fuel fee: 10 $HOC</span><button id="startMission" class="launch">START VOYAGE</button></div>
+      </section>
+      </div>
+
+      <section id="pirateMode" class="hidden">
+        <section class="section-block">
+          <div class="section-heading"><span class="tag">PIRATE FLEET</span><span class="hint">Choose fast offensive units for an intercept</span></div>
+          <div id="pirateGrid" class="card-grid"></div>
+        </section>
+        <section class="briefing pirate-briefing">
+          <div><div class="section-heading"><span class="tag">Intercept briefing</span></div><div id="pirateSummary" class="summary"></div></div>
+          <div class="launch-panel"><span class="fee">Ammunition & intel fee: 15 $HOC</span><button id="startHunt" class="launch pirate-launch">LAUNCH INTERCEPT</button></div>
+        </section>
+      </section>
+
+      <section class="progress-box">
+        <div class="progress-meta"><span id="progressLabel">Awaiting convoy orders</span><span id="progressText">0:00 / 1:30</span></div>
+        <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+      </section>
+      <section class="console"><div class="console-head"><span class="tag">Live radio log</span><button id="clearLog" type="button">Clear</button></div><div id="missionLog" class="mission-log" aria-live="polite"></div></section>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
