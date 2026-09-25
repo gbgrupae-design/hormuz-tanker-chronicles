@@ -40,8 +40,8 @@ const GAME_NFT_REGISTRY = {
 
 const DEFAULT_USER_NFTS = {
   'ocean-nomad': 1, republica: 1, 'persian-phantom': 1, 'shadow-voyager': 1, 'monsoon-titan': 2, 'l-etoile-marine': 0, 'royal-sovereign': 0, 'desert-wealth': 0, 'amaterasu-maru': 1, 'k-horizon': 0, kormoran: 0, 'poseidons-shield': 1,
-  'fleet-comand': 1, 'imperator-escort': 1, 'air-force-one-ocean-command': 1, 'overwatch-sentinel': 1, 'kestrel-x-hunter': 0, 'the-outlaw': 1, 'ghost-tanker': 1,
-  'imperator-mine': 1, 'leviathan-01': 1, apex: 2
+  'fleet-comand': 1, 'imperator-escort': 1, 'air-force-one-ocean-command': 0, 'overwatch-sentinel': 1, 'kestrel-x-hunter': 0, 'the-outlaw': 1, 'ghost-tanker': 1,
+  'imperator-mine': 0, 'leviathan-01': 1, apex: 2
 };
 
 const $ = (id) => document.getElementById(id);
@@ -67,6 +67,12 @@ function loadState() {
     allNftIds().forEach((id) => { userNFTs[id] = Math.max(0, Number(userNFTs[id]) || 0); });
     userNFTs['poseidons-shield'] = Math.max(1, userNFTs['poseidons-shield'] || 0);
     userNFTs['ghost-tanker'] = Math.max(1, userNFTs['ghost-tanker'] || 0);
+    userNFTs['air-force-one-ocean-command'] = 0;
+    userNFTs['imperator-mine'] = 0;
+    userNFTs['kestrel-x-hunter'] = 0;
+    userNFTs.apex = Math.max(1, userNFTs.apex || 0);
+    userNFTs['overwatch-sentinel'] = Math.max(1, userNFTs['overwatch-sentinel'] || 0);
+    userNFTs['leviathan-01'] = Math.max(1, userNFTs['leviathan-01'] || 0);
     const starterBalanceGranted = saved.starterBalanceGranted === true;
     const wallet = starterBalanceGranted
       ? (Number.isFinite(Number(saved.wallet)) ? Number(saved.wallet) : 0)
@@ -91,12 +97,15 @@ let voyageSeconds = 0;
 let huntElapsed = 0;
 let timer = null;
 let voyageFleet = [];
+let voyageEscorts = [];
 let voyageStrategy = 'escort';
 let nextVoyageEventAt = 0;
 let nextRadioAt = 0;
 let voyageInitialCargo = 0;
 let voyageUsedWeapons = new Set();
 let voyageUsedEscorts = new Set();
+let attackPaused = false;
+let attackPauseTimer = null;
 
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 function updateWallet() { $('wallet').textContent = `${fmt(state.wallet)} $HOC`; }
@@ -114,7 +123,9 @@ function ownedTotal(category) {
   return Object.keys(GAME_NFT_REGISTRY[category]).reduce((sum, id) => sum + (state.userNFTs[id] || 0), 0);
 }
 function protectionChance() {
-  return Math.min(0.95, 0.35 + state.selectedEscorts.reduce((sum, id) => sum + (registryItem('escorts', id).defenseBonus || 0) / 100, 0));
+  const routePenalty = { escort: 0, dark: 0.12, hunt: 0.2 }[$('route').value] || 0;
+  const escortDefense = state.selectedEscorts.reduce((sum, id) => sum + (registryItem('escorts', id).defenseBonus || 0) / 100, 0);
+  return Math.min(0.8, Math.max(0.08, 0.18 + escortDefense - routePenalty));
 }
 function estimatedDuration() {
   if (!state.selectedTankers.length) return 0;
@@ -125,7 +136,9 @@ function estimatedDuration() {
 function estimatedSurvival() {
   if (!state.selectedTankers.length) return 0;
   const averageSuccess = state.selectedTankers.reduce((sum, id) => sum + registryItem('tankers', id).baseSuccess, 0) / state.selectedTankers.length;
-  return Math.round(Math.min(99, averageSuccess + protectionChance() * 20));
+  const routePenalty = { escort: 0, dark: 14, hunt: 24 }[$('route').value] || 0;
+  const fleetPenalty = Math.max(0, state.selectedTankers.length - state.selectedEscorts.length * 2) * 3;
+  return Math.round(Math.max(20, Math.min(92, averageSuccess + protectionChance() * 18 - routePenalty - fleetPenalty)));
 }
 
 function liveCargo() {
@@ -133,7 +146,13 @@ function liveCargo() {
 }
 
 function scheduleVoyageEvent() {
-  nextVoyageEventAt = elapsed + 8 + Math.floor(Math.random() * 8);
+  const intervals = {
+    escort: [12, 20],
+    dark: [8, 14],
+    hunt: [6, 11]
+  };
+  const [minimum, maximum] = intervals[voyageStrategy] || intervals.escort;
+  nextVoyageEventAt = elapsed + minimum + Math.floor(Math.random() * (maximum - minimum + 1));
 }
 
 function scheduleRadioUpdate() {
@@ -142,53 +161,90 @@ function scheduleRadioUpdate() {
 
 function useDefenseWeapon() {
   const weaponOrder = ['apex', 'imperator-mine', 'kestrel-x-hunter', 'overwatch-sentinel', 'leviathan-01'];
-  const weaponId = weaponOrder.find((id) => state.selectedWeapons.includes(id) && state.userNFTs[id] > 0);
+  const availableWeapons = weaponOrder.filter((id) => state.selectedWeapons.includes(id)
+    && state.userNFTs[id] > 0);
+  const weaponId = availableWeapons.length
+    ? availableWeapons[Math.floor(Math.random() * availableWeapons.length)]
+    : null;
   if (!weaponId) return null;
-  state.userNFTs[weaponId] -= 1;
-  state.selectedWeapons.splice(state.selectedWeapons.indexOf(weaponId), 1);
   voyageUsedWeapons.add(weaponId);
   return registryItem('weapons', weaponId);
 }
 
+function routeRisk() {
+  return { escort: 0.2, dark: 0.55, hunt: 0.8 }[voyageStrategy] || 0.2;
+}
+
+function pauseForAttack() {
+  attackPaused = true;
+  $('progress-box').classList.add('attack-alert');
+  $('progressLabel').textContent = '⚠️ ATTACK IN PROGRESS — convoy paused';
+  clearTimeout(attackPauseTimer);
+  attackPauseTimer = setTimeout(() => {
+    attackPaused = false;
+    $('progress-box').classList.remove('attack-alert');
+    $('progressLabel').textContent = 'Strait crossing in progress';
+  }, 3000);
+}
+
 function checkForEnemies() {
   if (!voyageFleet.some((tanker) => tanker.alive)) return;
+  pauseForAttack();
   const scenarios = [
-    'Thermal signature detected 4.2 nautical miles ahead.',
-    'Fast attack craft is closing from the port side.',
-    'Incoming torpedo wake detected beneath the convoy.',
-    'Guided missiles launched from an unidentified vessel.'
+    'DRONE ATTACK: Multiple hostile drones are approaching from the north.',
+    'DRONE ATTACK: Low-flying attack drones are diving toward the lead tanker.',
+    'MISSILE ATTACK: Anti-ship missiles launched from an unidentified position.',
+    'MISSILE ATTACK: Incoming missile signatures detected on the starboard side.',
+    'TORPEDO ATTACK: Torpedo wakes detected beneath the convoy.',
+    'TORPEDO ATTACK: Submerged contact has launched toward the rear tanker.',
+    'PIRATE ATTACK: Fast pirate boats are attempting to board the convoy.',
+    'PIRATE ATTACK: Armed skiffs are closing at high speed from the port side.',
+    'VESSEL ATTACK: Hostile attack craft is maneuvering into firing range.',
+    'VESSEL ATTACK: Unidentified warship is shadowing the convoy and opening fire.'
   ];
   const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
   addLog(`[ALERT] ${scenario}`, 'failed');
-  const weapon = useDefenseWeapon();
+  const weapon = Math.random() < Math.min(0.72, 0.34 + routeRisk() * 0.35)
+    ? useDefenseWeapon()
+    : null;
   if (weapon) {
-    addLog(`[DEFENSE] ${weapon.name} engaged the threat. One charge consumed.`, 'success');
+    addLog(`[WEAPONS] ${weapon.name} fired. Hostile contact neutralized; convoy is resuming formation.`, 'success');
     addLog(`[CARGO] ${fmt(liveCargo())} kt remains in the convoy. Cargo loss: 0 kt.`);
-    saveState();
     renderInventory();
     scheduleVoyageEvent();
     return;
   }
 
   const defenseRoll = Math.random();
-  if (defenseRoll < protectionChance()) {
-    state.selectedEscorts.forEach((id) => voyageUsedEscorts.add(id));
-    addLog('[DEFENSE] Escort formation repelled the attackers with suppressive fire.', 'success');
+  const activeEscorts = voyageEscorts.filter((escort) => escort.alive);
+  const defenseChance = Math.min(0.8, protectionChance() + activeEscorts.length * 0.04 - voyageFleet.length * 0.025);
+  if (defenseRoll < defenseChance) {
+    addLog(`[DEFENSE] ${activeEscorts.length ? 'Escort formation' : 'Convoy crews'} repelled the attackers.`, 'success');
     addLog(`[CARGO] ${fmt(liveCargo())} kt remains in the convoy. Cargo loss: 0 kt.`);
     renderInventory();
     scheduleVoyageEvent();
     return;
   }
 
-  const survivors = voyageFleet.filter((tanker) => tanker.alive);
-  const target = survivors[Math.floor(Math.random() * survivors.length)];
-  target.alive = false;
-  const lostCargo = registryItem('tankers', target.id).cargo;
-  addLog(`[DESTROYED BY PIRATES] ${registryItem('tankers', target.id).name} was sunk. Its cargo is lost.`, 'failed');
-  addLog(`[CARGO] Lost ${fmt(lostCargo)} kt. Remaining convoy cargo: ${fmt(liveCargo())} kt.`, 'failed');
+  if (activeEscorts.length && Math.random() < 0.38) {
+    const targetEscort = activeEscorts[Math.floor(Math.random() * activeEscorts.length)];
+    targetEscort.alive = false;
+    voyageUsedEscorts.add(targetEscort.id);
+    addLog(`[ESCORT LOST] ${registryItem('escorts', targetEscort.id).name} was destroyed protecting the convoy.`, 'failed');
+    addLog(`[CARGO] Cargo loss: 0 kt. ${fmt(liveCargo())} kt remains in the convoy.`);
+  } else {
+    const survivors = voyageFleet.filter((tanker) => tanker.alive);
+    const target = survivors[Math.floor(Math.random() * survivors.length)];
+    target.alive = false;
+    const lostCargo = registryItem('tankers', target.id).cargo;
+    addLog(`[DESTROYED BY PIRATES] ${registryItem('tankers', target.id).name} was sunk. Its cargo is lost.`, 'failed');
+    addLog(`[CARGO] Lost ${fmt(lostCargo)} kt. Remaining convoy cargo: ${fmt(liveCargo())} kt.`, 'failed');
+  }
   renderInventory();
   if (!voyageFleet.some((tanker) => tanker.alive)) {
     addLog('[CRITICAL] Entire convoy lost. No cargo will reach port.', 'failed');
+    finishVoyage();
+    return;
   } else {
     scheduleVoyageEvent();
   }
@@ -200,6 +256,7 @@ function card(category, id) {
   const locked = owned === 0;
   const selected = category === 'tankers' ? selectedCount(id) : category === 'escorts' ? state.selectedEscorts.includes(id) : category === 'weapons' ? state.selectedWeapons.includes(id) : state.selectedPirates.includes(id);
   const sunk = category === 'tankers' && voyageFleet.some((tanker) => tanker.id === id && !tanker.alive);
+  const escortSunk = category === 'escorts' && voyageEscorts.some((escort) => escort.id === id && !escort.alive);
   const used = category === 'weapons' ? voyageUsedWeapons.has(id) : category === 'escorts' ? voyageUsedEscorts.has(id) : sunk;
   const stats = category === 'tankers'
     ? `Cargo <b>${item.cargo} kt</b> · Speed <b>${item.speedBonus >= 0 ? '+' : ''}${item.speedBonus}s</b> · Reward <b>${item.reward} $HOC</b>`
@@ -207,9 +264,10 @@ function card(category, id) {
       ? `${item.type === 'Pirate' ? 'Attack' : 'Defense'} <b>+${item.attackBonus || item.defenseBonus}%</b> · Speed <b>+${item.speedModifier}s</b>`
       : `${item.text} · Charges <b>${item.charges}</b>`;
   return `<article class="ship-card nft-card ${selected ? 'selected' : ''} ${locked ? 'locked-nft' : ''} ${sunk ? 'sunk' : ''} ${used ? 'used-nft' : ''}" data-category="${category}" data-id="${id}">
-    <div class="nft-image-wrap"><img src="${item.image}" class="nft-card-img" alt="${item.name}" loading="lazy"><span class="owned-badge">x${owned}</span>${locked ? `<button class="buy-overlay" type="button" data-opensea-url="${item.openseaUrl}">BUY ON OPENSEA</button>` : ''}</div>
+    <div class="nft-image-wrap"><img src="${item.image}" class="nft-card-img" alt="${item.name}" loading="lazy"><span class="owned-badge">x${owned}</span></div>
     <div class="nft-card-body"><h2>${item.name}</h2><div class="stats-line"><span>${stats}</span></div>
-    ${locked ? '' : `<small class="selected-count">${sunk ? 'DESTROYED BY PIRATES' : used && category === 'weapons' ? 'USED IN ATTACK' : selected ? `Selected: ${selected}` : 'Click to select'}</small>`}</div>
+    ${locked ? '' : `<small class="selected-count">${sunk || escortSunk ? 'DESTROYED IN ATTACK' : used && category === 'weapons' ? 'USED IN ATTACK' : selected ? `Selected: ${selected}` : 'Click to select'}</small>`}</div>
+    ${locked ? `<button class="buy-overlay" type="button" data-opensea-url="${item.openseaUrl}">BUY ON OPENSEA</button>` : ''}
   </article>`;
 }
 
@@ -297,9 +355,13 @@ function startVoyage() {
   voyageSeconds = estimatedDuration();
   voyageStrategy = $('route').value;
   voyageFleet = state.selectedTankers.map((id) => ({ id, alive: true }));
+  voyageEscorts = state.selectedEscorts.map((id) => ({ id, alive: true }));
   voyageInitialCargo = liveCargo();
   voyageUsedWeapons = new Set();
   voyageUsedEscorts = new Set();
+  attackPaused = false;
+  clearTimeout(attackPauseTimer);
+  $('progress-box').classList.remove('attack-alert');
   scheduleVoyageEvent();
   scheduleRadioUpdate();
   $('startMission').textContent = 'CONVOY UNDERWAY'; $('voyageState').textContent = 'AT SEA';
@@ -308,6 +370,7 @@ function startVoyage() {
   timer = setInterval(tickVoyage, 1000); saveState(); updateSummary();
 }
 function tickVoyage() {
+  if (attackPaused) return;
   elapsed++;
   $('progressFill').style.width = `${Math.min(100, elapsed / voyageSeconds * 100)}%`;
   $('progressText').textContent = `${clock(elapsed)} / ${clock(voyageSeconds)}`;
@@ -329,18 +392,28 @@ function finishVoyage() {
   clearInterval(timer);
   timer = null;
   running = false;
+  elapsed = voyageSeconds;
+  $('progressFill').style.width = '100%';
+  $('progressText').textContent = `${clock(voyageSeconds)} / ${clock(voyageSeconds)}`;
   const survivingTankers = voyageFleet.filter((tanker) => tanker.alive);
   const payout = survivingTankers.reduce((sum, tanker) => sum + registryItem('tankers', tanker.id).reward, 0);
   state.wallet += payout; state.voyages += 1; state.selectedTankers = []; state.selectedEscorts = []; state.selectedWeapons = [];
   voyageFleet = [];
+  voyageEscorts = [];
   voyageUsedWeapons = new Set();
   voyageUsedEscorts = new Set();
+  attackPaused = false;
+  clearTimeout(attackPauseTimer);
+  $('progress-box').classList.remove('attack-alert');
   $('startMission').textContent = 'START VOYAGE'; $('voyageState').textContent = 'DOCKED';
   const arrivedCargo = survivingTankers.reduce((sum, tanker) => sum + registryItem('tankers', tanker.id).cargo, 0);
   const lostCargo = voyageInitialCargo - arrivedCargo;
+  $('progressLabel').textContent = payout
+    ? 'Voyage complete — convoy reached port'
+    : 'Voyage ended — convoy lost';
   addLog(payout
     ? `CONVOY ARRIVED: ${fmt(arrivedCargo)} kt cargo delivered. ${fmt(lostCargo)} kt lost. Surviving tankers generated ${payout} $HOC.`
-    : `VOYAGE LOST: all ${fmt(voyageInitialCargo)} kt of cargo was lost.`, payout ? 'success' : 'failed');
+    : `MISSION ENDED: all convoy units were destroyed. ${fmt(voyageInitialCargo)} kt of cargo was lost.`, payout ? 'success' : 'failed');
   saveState(); renderInventory();
 }
 
@@ -374,6 +447,7 @@ function switchMode(mode) {
 
 $('startMission').addEventListener('click', startVoyage);
 $('startHunt').addEventListener('click', startHunt);
+$('route').addEventListener('change', updateSummary);
 $('convoyTab').addEventListener('click', () => switchMode('convoy'));
 $('pirateTab').addEventListener('click', () => switchMode('pirate'));
 $('clearLog').addEventListener('click', () => { $('missionLog').innerHTML = ''; });
