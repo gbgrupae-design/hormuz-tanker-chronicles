@@ -7,33 +7,41 @@ const HUNT_FEE = 15;
 const HUNT_DURATION = 40;
 const GAME_NFT_REGISTRY = {
   tankers: {
-    'monsoon-titan': { name: 'Monsoon Titan', type: 'Tanker', cargo: 120, speedBonus: -20, baseSuccess: 70, reward: 100, image: 'images/Monsoon titan.jpg', openseaUrl: 'https://opensea.io' },
-    'persian-phantom': { name: 'Persian Phantom', type: 'Tanker', cargo: 50, speedBonus: 30, baseSuccess: 90, reward: 40, image: 'images/Persian Phantom.jpg', openseaUrl: 'https://opensea.io' },
-    kormoran: { name: 'Kormoran Transporter', type: 'Tanker', cargo: 250, speedBonus: -50, baseSuccess: 55, reward: 250, image: 'images/ORP kormoran.jpg', openseaUrl: 'https://opensea.io' },
-    'amaterasu-maru': { name: 'Amaterasu Maru', type: 'Tanker', cargo: 180, speedBonus: -10, baseSuccess: 65, reward: 160, image: 'images/Amaterasu maru.jpg', openseaUrl: 'https://opensea.io' },
-    'black-marlin': { name: 'Black Marlin', type: 'Tanker', cargo: 140, speedBonus: -15, baseSuccess: 68, reward: 115, image: 'images/Ocean Nomad.jpg', openseaUrl: 'https://opensea.io' }
+    'ocean-nomad': { name: 'Ocean Nomad', type: 'Tanker', cargo: 140, speedBonus: -15, baseSuccess: 68, reward: 115, image: 'images/Ocean Nomad.jpg', openseaUrl: 'https://opensea.io/item/base/0x7a2b1c84bb265eda1f68ff40cb21c305f5440658/7' },
+    republica: { name: 'Republica', type: 'Tanker', cargo: 120, speedBonus: 0, baseSuccess: 72, reward: 100, image: 'images/Republika.jpg', openseaUrl: 'https://opensea.io/item/base/0x7a2b1c84bb265eda1f68ff40cb21c305f5440658/14' },
+    'persian-phantom': { name: 'Persian Phantom', type: 'Tanker', cargo: 50, speedBonus: 30, baseSuccess: 90, reward: 40, image: 'images/Persian Phantom.jpg', openseaUrl: 'https://opensea.io/item/base/0x7a2b1c84bb265eda1f68ff40cb21c305f5440658/4' },
+    'shadow-voyager': { name: 'Shadow Voyager', type: 'Tanker', cargo: 110, speedBonus: 10, baseSuccess: 78, reward: 90, image: 'images/Shadow Voyager.jpg', openseaUrl: 'https://opensea.io/item/base/0x7a2b1c84bb265eda1f68ff40cb21c305f5440658/1' },
+    'monsoon-titan': { name: 'Monsoon Titan', type: 'Tanker', cargo: 120, speedBonus: -20, baseSuccess: 70, reward: 100, image: 'images/Monsoon titan.jpg', openseaUrl: 'https://opensea.io/item/base/0x7a2b1c84bb265eda1f68ff40cb21c305f5440658/9' },
+    'l-etoile-marine': { name: "L'Étoile Marine", type: 'Tanker', cargo: 130, speedBonus: -5, baseSuccess: 75, reward: 110, image: 'images/L etoile Marine.jpg', openseaUrl: 'https://opensea.io/item/base/0x7a2b1c84bb265eda1f68ff40cb21c305f5440658/11' },
+    'royal-sovereign': { name: 'Royal Sovereign', type: 'Tanker', cargo: 160, speedBonus: -10, baseSuccess: 74, reward: 135, image: 'images/Royal sovereign.jpg', openseaUrl: 'https://opensea.io/item/base/0x7a2b1c84bb265eda1f68ff40cb21c305f5440658/6' },
+    'desert-wealth': { name: 'Desert Wealth', type: 'Tanker', cargo: 150, speedBonus: -8, baseSuccess: 76, reward: 125, image: 'images/Desert wealth.jpg', openseaUrl: 'https://opensea.io/item/base/0x7a2b1c84bb265eda1f68ff40cb21c305f5440658/3' },
+    'amaterasu-maru': { name: 'Amaterasu Maru', type: 'Tanker', cargo: 180, speedBonus: -10, baseSuccess: 65, reward: 160, image: 'images/Amaterasu maru.jpg', openseaUrl: 'https://opensea.io/item/base/0x7a2b1c84bb265eda1f68ff40cb21c305f5440658/8' },
+    'k-horizon': { name: 'K-Horizon', type: 'Tanker', cargo: 170, speedBonus: -12, baseSuccess: 70, reward: 145, image: 'images/K-horizon.jpg', openseaUrl: 'https://opensea.io/item/base/0x7a2b1c84bb265eda1f68ff40cb21c305f5440658/10' },
+    kormoran: { name: 'Kormoran', type: 'Tanker', cargo: 250, speedBonus: -50, baseSuccess: 55, reward: 250, image: 'images/ORP kormoran.jpg', openseaUrl: 'https://opensea.io/item/base/0x40f6accbc1ae9ae3c17ce9177481413bad5077ae/8' },
+    'poseidons-shield': { name: "Poseidon's Shield", type: 'Tanker', cargo: 155, speedBonus: -5, baseSuccess: 76, reward: 130, image: 'images/poseidons shields.jpg', openseaUrl: 'https://opensea.io/item/base/0x7a2b1c84bb265eda1f68ff40cb21c305f5440658/12' }
   },
   escorts: {
-    'fleet-command': { name: 'Fleet Command', type: 'Escort', defenseBonus: 30, speedModifier: 15, image: 'images/Flet command.jpg', openseaUrl: 'https://opensea.io' },
-    'aegis-vanguard': { name: 'Aegis Vanguard', type: 'Escort', defenseBonus: 20, speedModifier: 10, image: 'images/Aegis vanguard.jpg', openseaUrl: 'https://opensea.io' },
-    'guardian-patrol': { name: 'Guardian Patrol', type: 'Escort', defenseBonus: 15, speedModifier: 20, image: 'images/Overwatch sentinel.jpg', openseaUrl: 'https://opensea.io' },
-    imperator: { name: 'IMPERATOR', type: 'Escort', defenseBonus: 25, speedModifier: 5, image: 'images/Imperator.jpg', openseaUrl: 'https://opensea.io' }
+    'fleet-comand': { name: 'Fleet Comand', type: 'Escort', defenseBonus: 30, speedModifier: 15, image: 'images/Flet command.jpg', openseaUrl: 'https://opensea.io/item/base/0x40f6accbc1ae9ae3c17ce9177481413bad5077ae/7' },
+    'imperator-escort': { name: 'Imperator', type: 'Escort', defenseBonus: 25, speedModifier: 5, image: 'images/Imperator PH.jpg', openseaUrl: 'https://opensea.io/item/base/0x40f6accbc1ae9ae3c17ce9177481413bad5077ae/5' },
+    'air-force-one-ocean-command': { name: 'Air Force One: Ocean Command', type: 'Escort', defenseBonus: 20, speedModifier: 10, image: 'images/Air force one.jpg', openseaUrl: 'https://opensea.io/item/base/0x40f6accbc1ae9ae3c17ce9177481413bad5077ae/1' },
   },
   weapons: {
-    apex: { name: 'APEX', type: 'Weapon', charges: 1, image: 'images/apex.jpg', text: 'Niszczy rakiety', openseaUrl: 'https://opensea.io' },
-    'imperator-mine': { name: 'IMPERATOR Mine', type: 'Weapon', charges: 1, image: 'images/Imperator PH.jpg', text: 'Detonuje wroga', openseaUrl: 'https://opensea.io' },
-    guardian: { name: 'Guardian', type: 'Weapon', charges: 1, image: 'images/poseidons shields.jpg', text: 'Wzmacnia obronę konwoju', openseaUrl: 'https://opensea.io' }
+    apex: { name: 'APEX', type: 'Weapon', charges: 1, image: 'images/apex.jpg', text: 'Niszczy rakiety', openseaUrl: 'https://opensea.io/item/base/0x40f6accbc1ae9ae3c17ce9177481413bad5077ae/6' },
+    'imperator-mine': { name: 'Imperator', type: 'Weapon', charges: 1, image: 'images/Imperator.jpg', text: 'Detonuje wroga', openseaUrl: 'https://opensea.io/item/base/0x40f6accbc1ae9ae3c17ce9177481413bad5077ae/5' },
+    'kestrel-x-hunter': { name: 'Kestrel-X Hunter', type: 'Weapon', charges: 1, image: 'images/Kestrel-X.jpg', text: 'Przechwytuje szybkie cele', openseaUrl: 'https://opensea.io/item/base/0x40f6accbc1ae9ae3c17ce9177481413bad5077ae/2' },
+    'overwatch-sentinel': { name: 'Overwatch Sentinel', type: 'Weapon', charges: 1, image: 'images/Overwatch sentinel.jpg', text: 'Wykrywa zagrożenia', openseaUrl: 'https://opensea.io/item/base/0x40f6accbc1ae9ae3c17ce9177481413bad5077ae/4' },
+    'leviathan-01': { name: 'Leviathan-01', type: 'Weapon', charges: 1, image: 'images/Leviathan-01.jpg', text: 'Niszczy ciężkie cele', openseaUrl: 'https://opensea.io/item/base/0x40f6accbc1ae9ae3c17ce9177481413bad5077ae/3' }
   },
   pirates: {
-    'the-outlaw': { name: 'The Outlaw', type: 'Pirate', attackBonus: 40, speedModifier: 10, image: 'images/The Outlaw.jpg', openseaUrl: 'https://opensea.io' }
+    'the-outlaw': { name: 'The Outlaw', type: 'Pirate', attackBonus: 40, speedModifier: 10, image: 'images/The Outlaw.jpg', openseaUrl: 'https://opensea.io/collection/hormuz-tanker-chronicles' },
+    'ghost-tanker': { name: 'Ghost Tanker', type: 'Pirate', attackBonus: 35, speedModifier: 15, image: 'images/Shadow Voyager.jpg', openseaUrl: 'https://opensea.io/item/base/0x40f6accbc1ae9ae3c17ce9177481413bad5077ae/9' }
   }
 };
 
 const DEFAULT_USER_NFTS = {
-  'monsoon-titan': 2, 'persian-phantom': 1, kormoran: 0, 'amaterasu-maru': 1, 'black-marlin': 1,
-  'fleet-command': 1, 'aegis-vanguard': 0, 'guardian-patrol': 1, imperator: 1,
-  'the-outlaw': 1,
-  apex: 2, 'imperator-mine': 1, guardian: 0
+  'ocean-nomad': 1, republica: 1, 'persian-phantom': 1, 'shadow-voyager': 1, 'monsoon-titan': 2, 'l-etoile-marine': 0, 'royal-sovereign': 0, 'desert-wealth': 0, 'amaterasu-maru': 1, 'k-horizon': 0, kormoran: 0, 'poseidons-shield': 1,
+  'fleet-comand': 1, 'imperator-escort': 1, 'air-force-one-ocean-command': 1, 'overwatch-sentinel': 1, 'kestrel-x-hunter': 0, 'the-outlaw': 1, 'ghost-tanker': 1,
+  'imperator-mine': 1, 'leviathan-01': 1, apex: 2
 };
 
 const $ = (id) => document.getElementById(id);
@@ -57,6 +65,8 @@ function loadState() {
     if (!saved) return fallback;
     const userNFTs = { ...DEFAULT_USER_NFTS, ...(saved.userNFTs || {}) };
     allNftIds().forEach((id) => { userNFTs[id] = Math.max(0, Number(userNFTs[id]) || 0); });
+    userNFTs['poseidons-shield'] = Math.max(1, userNFTs['poseidons-shield'] || 0);
+    userNFTs['ghost-tanker'] = Math.max(1, userNFTs['ghost-tanker'] || 0);
     const starterBalanceGranted = saved.starterBalanceGranted === true;
     const wallet = starterBalanceGranted
       ? (Number.isFinite(Number(saved.wallet)) ? Number(saved.wallet) : 0)
@@ -82,6 +92,11 @@ let huntElapsed = 0;
 let timer = null;
 let voyageFleet = [];
 let voyageStrategy = 'escort';
+let nextVoyageEventAt = 0;
+let nextRadioAt = 0;
+let voyageInitialCargo = 0;
+let voyageUsedWeapons = new Set();
+let voyageUsedEscorts = new Set();
 
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 function updateWallet() { $('wallet').textContent = `${fmt(state.wallet)} $HOC`; }
@@ -113,39 +128,69 @@ function estimatedSurvival() {
   return Math.round(Math.min(99, averageSuccess + protectionChance() * 20));
 }
 
-function threatChance() {
-  return { escort: 2, dark: 8, hunt: 12 }[voyageStrategy] || 2;
+function liveCargo() {
+  return voyageFleet.filter((tanker) => tanker.alive).reduce((sum, tanker) => sum + registryItem('tankers', tanker.id).cargo, 0);
+}
+
+function scheduleVoyageEvent() {
+  nextVoyageEventAt = elapsed + 8 + Math.floor(Math.random() * 8);
+}
+
+function scheduleRadioUpdate() {
+  nextRadioAt = elapsed + 6 + Math.floor(Math.random() * 5);
+}
+
+function useDefenseWeapon() {
+  const weaponOrder = ['apex', 'imperator-mine', 'kestrel-x-hunter', 'overwatch-sentinel', 'leviathan-01'];
+  const weaponId = weaponOrder.find((id) => state.selectedWeapons.includes(id) && state.userNFTs[id] > 0);
+  if (!weaponId) return null;
+  state.userNFTs[weaponId] -= 1;
+  state.selectedWeapons.splice(state.selectedWeapons.indexOf(weaponId), 1);
+  voyageUsedWeapons.add(weaponId);
+  return registryItem('weapons', weaponId);
 }
 
 function checkForEnemies() {
   if (!voyageFleet.some((tanker) => tanker.alive)) return;
-  const roll = Math.floor(Math.random() * 100) + 1;
-  if (roll > threatChance()) return;
-
-  addLog('[ALERT] Hostile pirate speedboat detected!', 'failed');
-  const apexIndex = state.selectedWeapons.indexOf('apex');
-  if (apexIndex >= 0 && state.userNFTs.apex > 0) {
-    state.selectedWeapons.splice(apexIndex, 1);
-    state.userNFTs.apex -= 1;
-    addLog('[DEFENSE] APEX system neutralized the attack. One charge consumed.', 'success');
+  const scenarios = [
+    'Thermal signature detected 4.2 nautical miles ahead.',
+    'Fast attack craft is closing from the port side.',
+    'Incoming torpedo wake detected beneath the convoy.',
+    'Guided missiles launched from an unidentified vessel.'
+  ];
+  const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+  addLog(`[ALERT] ${scenario}`, 'failed');
+  const weapon = useDefenseWeapon();
+  if (weapon) {
+    addLog(`[DEFENSE] ${weapon.name} engaged the threat. One charge consumed.`, 'success');
+    addLog(`[CARGO] ${fmt(liveCargo())} kt remains in the convoy. Cargo loss: 0 kt.`);
     saveState();
     renderInventory();
+    scheduleVoyageEvent();
     return;
   }
 
   const defenseRoll = Math.random();
   if (defenseRoll < protectionChance()) {
-    addLog('[DEFENSE] Escort formation repelled the attackers.', 'success');
+    state.selectedEscorts.forEach((id) => voyageUsedEscorts.add(id));
+    addLog('[DEFENSE] Escort formation repelled the attackers with suppressive fire.', 'success');
+    addLog(`[CARGO] ${fmt(liveCargo())} kt remains in the convoy. Cargo loss: 0 kt.`);
+    renderInventory();
+    scheduleVoyageEvent();
     return;
   }
 
   const survivors = voyageFleet.filter((tanker) => tanker.alive);
   const target = survivors[Math.floor(Math.random() * survivors.length)];
   target.alive = false;
+  const lostCargo = registryItem('tankers', target.id).cargo;
   addLog(`[DESTROYED BY PIRATES] ${registryItem('tankers', target.id).name} was sunk. Its cargo is lost.`, 'failed');
+  addLog(`[CARGO] Lost ${fmt(lostCargo)} kt. Remaining convoy cargo: ${fmt(liveCargo())} kt.`, 'failed');
   renderInventory();
   if (!voyageFleet.some((tanker) => tanker.alive)) {
     addLog('[CRITICAL] Entire convoy lost. No cargo will reach port.', 'failed');
+  } else {
+    scheduleVoyageEvent();
   }
 }
 
@@ -155,15 +200,16 @@ function card(category, id) {
   const locked = owned === 0;
   const selected = category === 'tankers' ? selectedCount(id) : category === 'escorts' ? state.selectedEscorts.includes(id) : category === 'weapons' ? state.selectedWeapons.includes(id) : state.selectedPirates.includes(id);
   const sunk = category === 'tankers' && voyageFleet.some((tanker) => tanker.id === id && !tanker.alive);
+  const used = category === 'weapons' ? voyageUsedWeapons.has(id) : category === 'escorts' ? voyageUsedEscorts.has(id) : sunk;
   const stats = category === 'tankers'
     ? `Cargo <b>${item.cargo} kt</b> · Speed <b>${item.speedBonus >= 0 ? '+' : ''}${item.speedBonus}s</b> · Reward <b>${item.reward} $HOC</b>`
     : category === 'escorts' || category === 'pirates'
       ? `${item.type === 'Pirate' ? 'Attack' : 'Defense'} <b>+${item.attackBonus || item.defenseBonus}%</b> · Speed <b>+${item.speedModifier}s</b>`
       : `${item.text} · Charges <b>${item.charges}</b>`;
-  return `<article class="ship-card nft-card ${selected ? 'selected' : ''} ${locked ? 'locked-nft' : ''} ${sunk ? 'sunk' : ''}" data-category="${category}" data-id="${id}">
+  return `<article class="ship-card nft-card ${selected ? 'selected' : ''} ${locked ? 'locked-nft' : ''} ${sunk ? 'sunk' : ''} ${used ? 'used-nft' : ''}" data-category="${category}" data-id="${id}">
     <div class="nft-image-wrap"><img src="${item.image}" class="nft-card-img" alt="${item.name}" loading="lazy"><span class="owned-badge">x${owned}</span>${locked ? `<button class="buy-overlay" type="button" data-opensea-url="${item.openseaUrl}">BUY ON OPENSEA</button>` : ''}</div>
     <div class="nft-card-body"><h2>${item.name}</h2><div class="stats-line"><span>${stats}</span></div>
-    ${locked ? '' : `<small class="selected-count">${sunk ? 'DESTROYED BY PIRATES' : selected ? `Selected: ${selected}` : 'Click to select'}</small>`}</div>
+    ${locked ? '' : `<small class="selected-count">${sunk ? 'DESTROYED BY PIRATES' : used && category === 'weapons' ? 'USED IN ATTACK' : selected ? `Selected: ${selected}` : 'Click to select'}</small>`}</div>
   </article>`;
 }
 
@@ -207,6 +253,11 @@ function selectNFT(category, id) {
 
 function updateSummary() {
   const tankers = state.selectedTankers.map((id) => registryItem('tankers', id));
+  const escorts = state.selectedEscorts.map((id) => registryItem('escorts', id));
+  const weapons = state.selectedWeapons.map((id) => registryItem('weapons', id));
+  const manifestList = (items, emptyLabel) => items.length
+    ? items.map((item) => `<li>${item.name}</li>`).join('')
+    : `<li class="manifest-empty">${emptyLabel}</li>`;
   $('ownedTankers').textContent = ownedTotal('tankers');
   $('ownedEscorts').textContent = ownedTotal('escorts') + ownedTotal('pirates');
   $('ownedWeapons').textContent = ownedTotal('weapons');
@@ -217,8 +268,17 @@ function updateSummary() {
   $('protection').textContent = `${Math.round(protectionChance() * 100)}%`;
   $('fuelFee').textContent = `Fuel fee: ${fuelFee()} $HOC`;
   $('summary').innerHTML = tankers.length
-    ? `<b>${tankers.map((item) => item.name).join(', ')}</b><br>${state.selectedEscorts.length} escorts · ${state.selectedWeapons.length} weapons<br><strong>Estimated voyage: ${clock(estimatedDuration())} · Safe arrival chance: ${estimatedSurvival()}%</strong>`
-    : '<span>No tankers selected. Choose owned NFTs to form a convoy.</span>';
+    ? `<div class="manifest-columns">
+        <div><b>Tankers</b><ul>${manifestList(tankers, 'None selected')}</ul></div>
+        <div><b>Escorts</b><ul>${manifestList(escorts, 'None selected')}</ul></div>
+        <div><b>Weapons</b><ul>${manifestList(weapons, 'None selected')}</ul></div>
+      </div>
+      <strong>Estimated voyage: ${clock(estimatedDuration())} · Safe arrival chance: ${estimatedSurvival()}%</strong>`
+    : `<div class="manifest-columns">
+        <div><b>Tankers</b><ul>${manifestList(tankers, 'No tankers selected')}</ul></div>
+        <div><b>Escorts</b><ul>${manifestList(escorts, 'None selected')}</ul></div>
+        <div><b>Weapons</b><ul>${manifestList(weapons, 'None selected')}</ul></div>
+      </div>`;
   $('pirateSummary').innerHTML = state.selectedPirates.length
     ? `<b>${state.selectedPirates.map((id) => registryItem('pirates', id).name).join(', ')}</b><br>${state.selectedPirates.length} pirate unit(s) · 15 $HOC fee · 40 second hunt<br><strong>Estimated success chance: ${Math.min(75, 40 + (state.selectedPirates.length - 1) * 15)}%</strong>`
     : '<span>No pirate units selected. Choose an owned pirate NFT.</span>';
@@ -237,6 +297,11 @@ function startVoyage() {
   voyageSeconds = estimatedDuration();
   voyageStrategy = $('route').value;
   voyageFleet = state.selectedTankers.map((id) => ({ id, alive: true }));
+  voyageInitialCargo = liveCargo();
+  voyageUsedWeapons = new Set();
+  voyageUsedEscorts = new Set();
+  scheduleVoyageEvent();
+  scheduleRadioUpdate();
   $('startMission').textContent = 'CONVOY UNDERWAY'; $('voyageState').textContent = 'AT SEA';
   $('progressLabel').textContent = 'Strait crossing in progress'; $('missionLog').innerHTML = '';
   addLog(`Fleet launched. Fuel sink paid: ${fee} $HOC.`);
@@ -246,7 +311,17 @@ function tickVoyage() {
   elapsed++;
   $('progressFill').style.width = `${Math.min(100, elapsed / voyageSeconds * 100)}%`;
   $('progressText').textContent = `${clock(elapsed)} / ${clock(voyageSeconds)}`;
-  checkForEnemies();
+  if (elapsed >= nextRadioAt && elapsed < voyageSeconds) {
+    const radioMessages = [
+      `RADAR: Convoy signal stable. ${fmt(liveCargo())} kt of cargo currently secured.`,
+      `ENGINE ROOM: Tankers holding formation. ${voyageFleet.filter((tanker) => tanker.alive).length} vessel(s) operational.`,
+      'RADIO: Low visibility ahead. All escort crews remain at combat stations.',
+      'SONAR: No confirmed contacts. Weapons systems remain on standby.'
+    ];
+    addLog(radioMessages[Math.floor(Math.random() * radioMessages.length)], 'system');
+    scheduleRadioUpdate();
+  }
+  if (elapsed >= nextVoyageEventAt) checkForEnemies();
   if (elapsed >= voyageSeconds) finishVoyage();
 }
 function finishVoyage() {
@@ -258,8 +333,14 @@ function finishVoyage() {
   const payout = survivingTankers.reduce((sum, tanker) => sum + registryItem('tankers', tanker.id).reward, 0);
   state.wallet += payout; state.voyages += 1; state.selectedTankers = []; state.selectedEscorts = []; state.selectedWeapons = [];
   voyageFleet = [];
+  voyageUsedWeapons = new Set();
+  voyageUsedEscorts = new Set();
   $('startMission').textContent = 'START VOYAGE'; $('voyageState').textContent = 'DOCKED';
-  addLog(payout ? `CONVOY ARRIVED: surviving tankers generated ${payout} $HOC.` : 'VOYAGE LOST: no tankers survived.', payout ? 'success' : 'failed');
+  const arrivedCargo = survivingTankers.reduce((sum, tanker) => sum + registryItem('tankers', tanker.id).cargo, 0);
+  const lostCargo = voyageInitialCargo - arrivedCargo;
+  addLog(payout
+    ? `CONVOY ARRIVED: ${fmt(arrivedCargo)} kt cargo delivered. ${fmt(lostCargo)} kt lost. Surviving tankers generated ${payout} $HOC.`
+    : `VOYAGE LOST: all ${fmt(voyageInitialCargo)} kt of cargo was lost.`, payout ? 'success' : 'failed');
   saveState(); renderInventory();
 }
 
